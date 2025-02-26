@@ -3,8 +3,12 @@ name: Validation
 on:
   pull_request:
     branches: [main, fork_integration, fork_upstream]
+    paths-ignore:
+      - '.github/**'
   push:
     branches: [main, fork_integration, fork_upstream]
+    paths-ignore:
+      - '.github/**'
 
 permissions:
   contents: read

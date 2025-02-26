@@ -3,6 +3,8 @@ name: Release Management
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '.github/**'
 
 # Add workflow-level permissions
 permissions:
