@@ -140,7 +140,7 @@ jobs:
           DIFF_LINES=$(git diff fork_upstream | wc -l | tr -d ' ')
           echo "Diff contains $DIFF_LINES lines"
 
-          if [[ "$USE_LLM" == "true" && "$DIFF_LINES" -le "$MAX_DIFF_LINES" ]]; then
+          if [[ -n "$LLM_MODEL" && "$DIFF_LINES" -le "$MAX_DIFF_LINES" ]]; then
             # Generate PR description using aipr
             echo "Generating PR description using $LLM_MODEL..."
             # Save current branch and target for reference
