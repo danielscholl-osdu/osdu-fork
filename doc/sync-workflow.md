@@ -66,6 +66,10 @@ sequenceDiagram
 
 If the merge is clean, a pull request is automatically generated against the fork_upstream branch. The PR contains a summary of the upstream changes, allowing maintainers to review, test, and merge the updates before they reach the main development branch.
 
+### Diff Size Limits for PR Descriptions
+
+To avoid creating prompts that exceed the language model's maximum context size, the workflow checks the diff size before generating the pull request description. If more than 20,000 lines differ from the `fork_upstream` branch, the enhanced description step is skipped and a default message is used instead. Otherwise, the `aipr` tool is invoked with a matching diff limit to keep the generated prompt within bounds.
+
 ## Conclusion
 
 Maintaining an up-to-date fork is essential for ensuring compatibility with upstream changes. This workflow automates much of the synchronization process, reducing the burden on developers while ensuring stability and transparency. By regularly integrating upstream updates and managing conflicts proactively, this workflow helps maintain a clean and efficient development environment.

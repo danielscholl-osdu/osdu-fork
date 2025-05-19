@@ -135,18 +135,26 @@ jobs:
             echo "USE_LLM=false" >> $GITHUB_ENV
           fi
           
-          if [[ "$USE_LLM" == "true" ]]; then
+          # Calculate diff size to avoid generating prompts that exceed model limits
+          MAX_DIFF_LINES=20000
+          DIFF_LINES=$(git diff fork_upstream | wc -l | tr -d ' ')
+          echo "Diff contains $DIFF_LINES lines"
+
+          if [[ "$USE_LLM" == "true" && "$DIFF_LINES" -le "$MAX_DIFF_LINES" ]]; then
             # Generate PR description using aipr
             echo "Generating PR description using $LLM_MODEL..."
             # Save current branch and target for reference
             CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
             TARGET_BRANCH="fork_upstream"
-            
-            # Use the aipr tool with the --vulns flag
-            PR_DESCRIPTION=$(aipr -t $TARGET_BRANCH --vulns -p meta -m $LLM_MODEL)
-            
+
+            # Use the aipr tool with the --vulns flag and diff limit parameter
+            PR_DESCRIPTION=$(aipr -t $TARGET_BRANCH --vulns -p meta -m $LLM_MODEL --max-diff-lines $MAX_DIFF_LINES)
+
             echo "Generated enhanced PR description using $LLM_MODEL"
           else
+            if [[ "$DIFF_LINES" -gt "$MAX_DIFF_LINES" ]]; then
+              echo "Diff is larger than $MAX_DIFF_LINES lines; skipping aipr description"
+            fi
             # Use default PR description
             PR_DESCRIPTION="Automated PR to sync with upstream repository changes.
 
