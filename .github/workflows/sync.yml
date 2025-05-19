@@ -138,6 +138,10 @@ jobs:
           # Calculate diff size to avoid generating prompts that exceed model limits
           MAX_DIFF_LINES=20000
           DIFF_LINES=$(git diff fork_upstream | wc -l | tr -d ' ')
+          # Ensure DIFF_LINES is a valid numeric value
+          if [[ -z "$DIFF_LINES" || ! "$DIFF_LINES" =~ ^[0-9]+$ ]]; then
+            DIFF_LINES=0
+          fi
           echo "Diff contains $DIFF_LINES lines"
 
           if [[ -n "$LLM_MODEL" && "$DIFF_LINES" -le "$MAX_DIFF_LINES" ]]; then
